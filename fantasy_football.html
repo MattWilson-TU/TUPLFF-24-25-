@@ -1,0 +1,952 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fantasy Football Tracker</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                color: #333;
+                line-height: 1.6;
+                background-color: #f5d76e; /* Gold background color */
+            }
+            
+            h1, h2, h3 {
+                color: #2c3e50;
+                text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+            }
+            
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-bottom: 20px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                background-color: white; /* Add white background to tables for contrast with gold body background */
+            }
+            
+            th, td {
+                padding: 12px 15px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            th {
+                background-color: #3498db;
+                color: white;
+                font-weight: bold;
+            }
+            
+            tr:hover {
+                background-color: #f5f5f5;
+            }
+            
+            .past-player {
+                font-style: italic;
+                color: #777;
+                background-color: #f9f9f9;
+            }
+            
+            /* Position coloring - applied directly to cells */
+            td.position-GKP {
+                border-left: 3px solid #fdcb6e;
+            }
+            
+            td.position-DEF {
+                border-left: 3px solid #00cec9;
+            }
+            
+            td.position-MID {
+                border-left: 3px solid #6c5ce7;
+            }
+            
+            td.position-FWD {
+                border-left: 3px solid #e17055;
+            }
+            
+            /* Past players header */
+            .past-players-header td {
+                text-align: center;
+                color: #555;
+                background-color: #f0f0f0;
+                font-style: italic;
+                font-weight: bold;
+                padding: 12px;
+                border-top: 1px dashed #ccc;
+                border-bottom: 1px dashed #ccc;
+                margin-top: 20px;
+            }
+            
+            /* Current squad header */
+            .current-players-header td {
+                text-align: center;
+                color: #333;
+                background-color: #e8f5e9;
+                font-weight: bold;
+                padding: 12px;
+                border-top: 1px solid #4CAF50;
+                border-bottom: 1px solid #4CAF50;
+            }
+            
+            .league-table {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            .league-table th:first-child,
+            .league-table td:first-child {
+                width: 60px;
+                text-align: center;
+            }
+            
+            .league-table th:nth-child(2),
+            .league-table td:nth-child(2) {
+                width: 150px;
+            }
+            
+            .tab {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #f1f1f1;
+                cursor: pointer;
+                border-radius: 5px 5px 0 0;
+                margin-right: 5px;
+                border: 1px solid #ddd;
+                border-bottom: none;
+                box-shadow: 0 -2px 3px rgba(0,0,0,0.05);
+            }
+            
+            .tab.active {
+                background-color: #3498db;
+                color: white;
+                box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            }
+            
+            .tab-content {
+                display: none;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 0 5px 5px 5px;
+                margin-top: -1px;
+                background-color: white;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            
+            .tab-content.active {
+                display: block;
+            }
+            
+            .squad-table td:nth-child(n+5):not(:last-child) {
+                position: relative;
+            }
+            
+            .squad-info {
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: white;
+                border-left: 4px solid #2196f3;
+                border-radius: 4px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            
+            .highlight {
+                background-color: #ffffd0;
+            }
+            
+            .manager-squad {
+                display: none;
+                margin-bottom: 40px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                overflow: hidden;
+                background-color: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            .manager-squad.active {
+                display: block;
+            }
+            
+            .manager-squad h2 {
+                margin: 0;
+                padding: 10px 15px;
+                background-color: #f5f5f5;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .highest-gameweek {
+                background-color: white;
+                padding: 10px;
+                margin-bottom: 20px;
+                border-left: 4px solid #4CAF50;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                border-radius: 4px;
+            }
+            
+            .warning {
+                background-color: #fff3cd;
+                padding: 10px;
+                margin-bottom: 20px;
+                border-left: 4px solid #ffc107;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                border-radius: 4px;
+            }
+            
+            /* Styling for the total points column */
+            .squad-table th:last-child,
+            .squad-table td:last-child {
+                background-color: #e8f5e9;
+                font-weight: bold;
+                border-left: 2px solid #4CAF50;
+                text-align: center;
+            }
+            
+            /* Preserve styling for past players' total points */
+            tr.past-player td:last-child {
+                background-color: rgba(232, 245, 233, 0.7);
+                font-weight: bold;
+                font-style: italic;
+                color: #777;
+                border-left: 2px solid rgba(76, 175, 80, 0.5);
+                text-align: center;
+            }
+            
+            /* Header for total points */
+            .squad-table th:last-child {
+                background-color: #4CAF50;
+                color: white;
+            }
+            
+            /* Manager dropdown styling */
+            .manager-selector {
+                margin-bottom: 20px;
+                width: 100%;
+                background-color: white;
+                padding: 15px;
+                border-radius: 5px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            
+            .manager-dropdown {
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                width: 100%;
+                max-width: 400px;
+                margin-top: 10px;
+                background-color: white;
+            }
+            
+            /* Hover effects for rows to improve readability */
+            .squad-table tr:hover td {
+                background-color: rgba(245, 245, 245, 0.6);
+            }
+            
+            .squad-table tr.past-player:hover td {
+                background-color: rgba(245, 245, 245, 0.4);
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Fantasy Football Tracker</h1>
+        <p>Last updated: 2025-03-27 16:53:09</p>
+        <p>Current Gameweek: 29</p>
+        
+        
+        <div class="highest-gameweek">
+            <h3>Highest Scoring Manager in Gameweek 29</h3>
+            <p>Michelle H: 38 points</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('league-tab')">League Table</div>
+            <div class="tab" onclick="showTab('squads-tab')">Manager Squads</div>
+        </div>
+        
+        <div id="league-tab" class="tab-content active">
+            <h2>League Table</h2>
+            
+    <table class="league-table">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Manager</th>
+                <th>Total Points</th>
+                <th>Gap to Manager Above</th>
+                <th>Gap to Top</th>
+                <th>Diff from Phase 1</th>
+            </tr>
+        </thead>
+        <tbody>
+    
+        <tr>
+            <td>1</td>
+            <td>AVO</td>
+            <td>1131</td>
+            <td>-</td>
+            <td>-</td>
+            <td>+107</td>
+        </tr>
+        
+        <tr>
+            <td>2</td>
+            <td>Dil</td>
+            <td>1029</td>
+            <td>102</td>
+            <td>102</td>
+            <td>+29</td>
+        </tr>
+        
+        <tr>
+            <td>3</td>
+            <td>Shotgun</td>
+            <td>995</td>
+            <td>34</td>
+            <td>136</td>
+            <td>+0</td>
+        </tr>
+        
+        <tr>
+            <td>4</td>
+            <td>Fridge</td>
+            <td>994</td>
+            <td>1</td>
+            <td>137</td>
+            <td>+70</td>
+        </tr>
+        
+        <tr>
+            <td>5</td>
+            <td>Scum</td>
+            <td>960</td>
+            <td>34</td>
+            <td>171</td>
+            <td>+0</td>
+        </tr>
+        
+        <tr>
+            <td>6</td>
+            <td>Ed</td>
+            <td>938</td>
+            <td>22</td>
+            <td>193</td>
+            <td>+9</td>
+        </tr>
+        
+        <tr>
+            <td>7</td>
+            <td>Louise Hadfield</td>
+            <td>895</td>
+            <td>43</td>
+            <td>236</td>
+            <td>+0</td>
+        </tr>
+        
+        <tr>
+            <td>8</td>
+            <td>Rich Hadfield</td>
+            <td>875</td>
+            <td>20</td>
+            <td>256</td>
+            <td>+3</td>
+        </tr>
+        
+        <tr>
+            <td>9</td>
+            <td>Michelle H</td>
+            <td>862</td>
+            <td>13</td>
+            <td>269</td>
+            <td>+44</td>
+        </tr>
+        
+        <tr>
+            <td>10</td>
+            <td>Monkey</td>
+            <td>858</td>
+            <td>4</td>
+            <td>273</td>
+            <td>+72</td>
+        </tr>
+        
+        <tr>
+            <td>11</td>
+            <td>Dave H</td>
+            <td>838</td>
+            <td>20</td>
+            <td>293</td>
+            <td>-7</td>
+        </tr>
+        
+        <tr>
+            <td>12</td>
+            <td>Shergs</td>
+            <td>832</td>
+            <td>6</td>
+            <td>299</td>
+            <td>+5</td>
+        </tr>
+        
+        <tr>
+            <td>13</td>
+            <td>Moses</td>
+            <td>791</td>
+            <td>41</td>
+            <td>340</td>
+            <td>+0</td>
+        </tr>
+        
+        <tr>
+            <td>14</td>
+            <td>John</td>
+            <td>741</td>
+            <td>50</td>
+            <td>390</td>
+            <td>+0</td>
+        </tr>
+        
+        <tr>
+            <td>15</td>
+            <td>Pony</td>
+            <td>489</td>
+            <td>252</td>
+            <td>642</td>
+            <td>+0</td>
+        </tr>
+        
+        <tr>
+            <td>16</td>
+            <td>Young Hadfields</td>
+            <td>485</td>
+            <td>4</td>
+            <td>646</td>
+            <td>+8</td>
+        </tr>
+        
+        </tbody>
+    </table>
+    
+        </div>
+        
+        <div id="squads-tab" class="tab-content">
+            <h2>Manager Squads</h2>
+            <div class="squad-info">
+                <p>Players are grouped by position through color-coding on the left border (GKP, DEF, MID, FWD). The points shown are the total points accumulated by each player during that phase.</p>
+                <p>The <strong>Current Squad</strong> section shows the players in the latest phase (Phase 5). <strong>Previous Players</strong> section shows players that were in the squad in earlier phases but are no longer in the current squad.</p>
+                <p>The <strong>Total Points</strong> column shows the combined points from all phases in which the player was selected by this manager.</p>
+            </div>
+            
+            <div class="manager-selector">
+                <label for="manager-dropdown"><strong>Select Manager:</strong></label><br>
+                <select id="manager-dropdown" class="manager-dropdown" onchange="showManager(this.value)">
+                    <option value="">Select a manager...</option>
+                    <option value="AVO">AVO (1131 pts)</option><option value="Dil">Dil (1029 pts)</option><option value="Shotgun">Shotgun (995 pts)</option><option value="Fridge">Fridge (994 pts)</option><option value="Scum">Scum (960 pts)</option><option value="Ed">Ed (938 pts)</option><option value="Louise Hadfield">Louise Hadfield (895 pts)</option><option value="Rich Hadfield">Rich Hadfield (875 pts)</option><option value="Michelle H">Michelle H (862 pts)</option><option value="Monkey">Monkey (858 pts)</option><option value="Dave H">Dave H (838 pts)</option><option value="Shergs">Shergs (832 pts)</option><option value="Moses">Moses (791 pts)</option><option value="John">John (741 pts)</option><option value="Pony">Pony (489 pts)</option><option value="Young Hadfields">Young Hadfields (485 pts)</option>
+                </select>
+            </div>
+            
+            
+        <div id="manager-AVO" class="manager-squad">
+            <h2>AVO - 1131 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Arrizabalaga</td><td>BOU</td><td>GKP</td><td>-</td><td>-</td><td>12</td><td>8</td><td>0</td><td>20</td></tr><tr><td class="position-DEF">Gabriel</td><td>ARS</td><td>DEF</td><td>-</td><td>-</td><td>11</td><td>22</td><td>0</td><td>33</td></tr><tr><td class="position-DEF">Hall</td><td>NEW</td><td>DEF</td><td>32</td><td>47</td><td>13</td><td>10</td><td>0</td><td>102</td></tr><tr><td class="position-DEF">Milenković</td><td>NFO</td><td>DEF</td><td>-</td><td>-</td><td>9</td><td>28</td><td>0</td><td>37</td></tr><tr><td class="position-MID">Lewis-Potter</td><td>BRE</td><td>MID</td><td>-</td><td>-</td><td>-</td><td>12</td><td>0</td><td>12</td></tr><tr><td class="position-MID">I.Sarr</td><td>CRY</td><td>MID</td><td>-</td><td>-</td><td>14</td><td>31</td><td>0</td><td>45</td></tr><tr><td class="position-MID">O.Dango</td><td>BOU</td><td>MID</td><td>-</td><td>-</td><td>-</td><td>13</td><td>0</td><td>13</td></tr><tr><td class="position-MID">Gordon</td><td>NEW</td><td>MID</td><td>39</td><td>51</td><td>17</td><td>6</td><td>0</td><td>113</td></tr><tr><td class="position-MID">Rogers</td><td>AVL</td><td>MID</td><td>45</td><td>43</td><td>9</td><td>16</td><td>0</td><td>113</td></tr><tr><td class="position-FWD">Marmoush</td><td>MCI</td><td>FWD</td><td>-</td><td>-</td><td>-</td><td>34</td><td>0</td><td>34</td></tr><tr><td class="position-FWD">Wood</td><td>NFO</td><td>FWD</td><td>68</td><td>46</td><td>40</td><td>20</td><td>0</td><td>174</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-GKP">Vicario</td><td>TOT</td><td>GKP</td><td>29</td><td>8</td><td>-</td><td>-</td><td>-</td><td>37</td></tr><tr class="past-player"><td class="position-DEF">Digne</td><td>AVL</td><td>DEF</td><td>37</td><td>13</td><td>13</td><td>-</td><td>-</td><td>63</td></tr><tr class="past-player"><td class="position-DEF">Romero</td><td>TOT</td><td>DEF</td><td>34</td><td>1</td><td>-</td><td>-</td><td>-</td><td>35</td></tr><tr class="past-player"><td class="position-MID">Maddison</td><td>TOT</td><td>MID</td><td>52</td><td>47</td><td>3</td><td>-</td><td>-</td><td>102</td></tr><tr class="past-player"><td class="position-MID">McGinn</td><td>AVL</td><td>MID</td><td>15</td><td>27</td><td>-</td><td>-</td><td>-</td><td>42</td></tr><tr class="past-player"><td class="position-MID">Bernardo</td><td>MCI</td><td>MID</td><td>33</td><td>34</td><td>-</td><td>-</td><td>-</td><td>67</td></tr><tr class="past-player"><td class="position-FWD">Vardy</td><td>LEI</td><td>FWD</td><td>43</td><td>33</td><td>-</td><td>-</td><td>-</td><td>76</td></tr><tr class="past-player"><td class="position-FWD">Raúl</td><td>FUL</td><td>FWD</td><td>-</td><td>-</td><td>13</td><td>-</td><td>-</td><td>13</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Dil" class="manager-squad">
+            <h2>Dil - 1029 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Flekken</td><td>BRE</td><td>GKP</td><td>29</td><td>32</td><td>9</td><td>26</td><td>0</td><td>96</td></tr><tr><td class="position-DEF">Aina</td><td>NFO</td><td>DEF</td><td>-</td><td>-</td><td>13</td><td>14</td><td>0</td><td>27</td></tr><tr><td class="position-DEF">Alexander-Arnold</td><td>LIV</td><td>DEF</td><td>47</td><td>36</td><td>25</td><td>27</td><td>0</td><td>135</td></tr><tr><td class="position-DEF">White</td><td>ARS</td><td>DEF</td><td>-</td><td>-</td><td>-</td><td>2</td><td>0</td><td>2</td></tr><tr><td class="position-DEF">Collins</td><td>BRE</td><td>DEF</td><td>29</td><td>33</td><td>10</td><td>18</td><td>0</td><td>90</td></tr><tr><td class="position-MID">Mbeumo</td><td>BRE</td><td>MID</td><td>76</td><td>60</td><td>13</td><td>30</td><td>0</td><td>179</td></tr><tr><td class="position-MID">Ødegaard</td><td>ARS</td><td>MID</td><td>14</td><td>30</td><td>16</td><td>16</td><td>0</td><td>76</td></tr><tr><td class="position-MID">Semenyo</td><td>BOU</td><td>MID</td><td>46</td><td>28</td><td>28</td><td>9</td><td>0</td><td>111</td></tr><tr><td class="position-MID">J.Murphy</td><td>NEW</td><td>MID</td><td>-</td><td>-</td><td>19</td><td>13</td><td>0</td><td>32</td></tr><tr><td class="position-MID">Ramsey</td><td>AVL</td><td>MID</td><td>-</td><td>-</td><td>-</td><td>11</td><td>0</td><td>11</td></tr><tr><td class="position-FWD">João Pedro</td><td>BHA</td><td>FWD</td><td>30</td><td>45</td><td>5</td><td>31</td><td>0</td><td>111</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-DEF">Colwill</td><td>CHE</td><td>DEF</td><td>24</td><td>22</td><td>3</td><td>-</td><td>-</td><td>49</td></tr><tr class="past-player"><td class="position-DEF">Konsa</td><td>AVL</td><td>DEF</td><td>20</td><td>18</td><td>-</td><td>-</td><td>-</td><td>38</td></tr><tr class="past-player"><td class="position-MID">Jones</td><td>LIV</td><td>MID</td><td>-</td><td>28</td><td>6</td><td>-</td><td>-</td><td>34</td></tr><tr class="past-player"><td class="position-MID">Rodrigo</td><td>MCI</td><td>MID</td><td>2</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2</td></tr><tr class="past-player"><td class="position-MID">Neto</td><td>CHE</td><td>MID</td><td>25</td><td>11</td><td>-</td><td>-</td><td>-</td><td>36</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Shotgun" class="manager-squad">
+            <h2>Shotgun - 995 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Leno</td><td>FUL</td><td>GKP</td><td>39</td><td>22</td><td>12</td><td>21</td><td>0</td><td>94</td></tr><tr><td class="position-DEF">Konaté</td><td>LIV</td><td>DEF</td><td>46</td><td>1</td><td>20</td><td>15</td><td>0</td><td>82</td></tr><tr><td class="position-DEF">James</td><td>CHE</td><td>DEF</td><td>5</td><td>0</td><td>15</td><td>4</td><td>0</td><td>24</td></tr><tr><td class="position-DEF">Robertson</td><td>LIV</td><td>DEF</td><td>39</td><td>14</td><td>13</td><td>10</td><td>0</td><td>76</td></tr><tr><td class="position-DEF">Akanji</td><td>MCI</td><td>DEF</td><td>23</td><td>12</td><td>9</td><td>0</td><td>0</td><td>44</td></tr><tr><td class="position-MID">M.Salah</td><td>LIV</td><td>MID</td><td>107</td><td>102</td><td>42</td><td>55</td><td>0</td><td>306</td></tr><tr><td class="position-MID">Gibbs-White</td><td>NFO</td><td>MID</td><td>21</td><td>50</td><td>24</td><td>23</td><td>0</td><td>118</td></tr><tr><td class="position-MID">Smith Rowe</td><td>FUL</td><td>MID</td><td>54</td><td>9</td><td>17</td><td>15</td><td>0</td><td>95</td></tr><tr><td class="position-MID">Grealish</td><td>MCI</td><td>MID</td><td>15</td><td>9</td><td>1</td><td>1</td><td>0</td><td>26</td></tr><tr><td class="position-FWD">Füllkrug</td><td>WHU</td><td>FWD</td><td>3</td><td>19</td><td>0</td><td>0</td><td>0</td><td>22</td></tr><tr><td class="position-FWD">N.Jackson</td><td>CHE</td><td>FWD</td><td>60</td><td>36</td><td>12</td><td>0</td><td>0</td><td>108</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Fridge" class="manager-squad">
+            <h2>Fridge - 994 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-DEF">Botman</td><td>NEW</td><td>DEF</td><td>-</td><td>-</td><td>6</td><td>0</td><td>0</td><td>6</td></tr><tr><td class="position-DEF">Saliba</td><td>ARS</td><td>DEF</td><td>23</td><td>51</td><td>13</td><td>27</td><td>0</td><td>114</td></tr><tr><td class="position-DEF">Murillo</td><td>NFO</td><td>DEF</td><td>-</td><td>33</td><td>9</td><td>16</td><td>0</td><td>58</td></tr><tr><td class="position-MID">De Bruyne</td><td>MCI</td><td>MID</td><td>19</td><td>32</td><td>21</td><td>4</td><td>0</td><td>76</td></tr><tr><td class="position-MID">Kudus</td><td>WHU</td><td>MID</td><td>23</td><td>28</td><td>8</td><td>15</td><td>0</td><td>74</td></tr><tr><td class="position-MID">Palmer</td><td>CHE</td><td>MID</td><td>84</td><td>69</td><td>20</td><td>8</td><td>0</td><td>181</td></tr><tr><td class="position-MID">Damsgaard</td><td>BRE</td><td>MID</td><td>-</td><td>35</td><td>15</td><td>18</td><td>0</td><td>68</td></tr><tr><td class="position-FWD">Delap</td><td>IPS</td><td>FWD</td><td>51</td><td>29</td><td>13</td><td>15</td><td>0</td><td>108</td></tr><tr><td class="position-FWD">Raúl</td><td>FUL</td><td>FWD</td><td>-</td><td>-</td><td>-</td><td>18</td><td>0</td><td>18</td></tr><tr><td class="position-FWD">Cunha</td><td>WOL</td><td>FWD</td><td>59</td><td>52</td><td>12</td><td>20</td><td>0</td><td>143</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-GKP">Ortega Moreno</td><td>MCI</td><td>GKP</td><td>-</td><td>-</td><td>2</td><td>-</td><td>-</td><td>2</td></tr><tr class="past-player"><td class="position-GKP">Ramsdale</td><td>SOU</td><td>GKP</td><td>-</td><td>16</td><td>-</td><td>-</td><td>-</td><td>16</td></tr><tr class="past-player"><td class="position-GKP">Arrizabalaga</td><td>BOU</td><td>GKP</td><td>19</td><td>-</td><td>-</td><td>-</td><td>-</td><td>19</td></tr><tr class="past-player"><td class="position-DEF">Maatsen</td><td>AVL</td><td>DEF</td><td>9</td><td>-</td><td>-</td><td>-</td><td>-</td><td>9</td></tr><tr class="past-player"><td class="position-DEF">Aït-Nouri</td><td>WOL</td><td>DEF</td><td>-</td><td>21</td><td>-</td><td>-</td><td>-</td><td>21</td></tr><tr class="past-player"><td class="position-DEF">Estupiñan</td><td>BHA</td><td>DEF</td><td>6</td><td>-</td><td>-</td><td>-</td><td>-</td><td>6</td></tr><tr class="past-player"><td class="position-MID">Anderson</td><td>NFO</td><td>MID</td><td>-</td><td>-</td><td>15</td><td>-</td><td>-</td><td>15</td></tr><tr class="past-player"><td class="position-MID">Caicedo</td><td>CHE</td><td>MID</td><td>35</td><td>22</td><td>-</td><td>-</td><td>-</td><td>57</td></tr><tr class="past-player"><td class="position-MID">Mount</td><td>MUN</td><td>MID</td><td>3</td><td>-</td><td>-</td><td>-</td><td>-</td><td>3</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Scum" class="manager-squad">
+            <h2>Scum - 960 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Pope</td><td>NEW</td><td>GKP</td><td>43</td><td>5</td><td>0</td><td>8</td><td>0</td><td>56</td></tr><tr><td class="position-DEF">Mazraoui</td><td>MUN</td><td>DEF</td><td>39</td><td>11</td><td>11</td><td>11</td><td>0</td><td>72</td></tr><tr><td class="position-DEF">Muñoz</td><td>CRY</td><td>DEF</td><td>25</td><td>36</td><td>27</td><td>24</td><td>0</td><td>112</td></tr><tr><td class="position-DEF">Virgil</td><td>LIV</td><td>DEF</td><td>56</td><td>19</td><td>16</td><td>17</td><td>0</td><td>108</td></tr><tr><td class="position-DEF">Robinson</td><td>FUL</td><td>DEF</td><td>40</td><td>27</td><td>21</td><td>10</td><td>0</td><td>98</td></tr><tr><td class="position-MID">Luis Díaz</td><td>LIV</td><td>MID</td><td>64</td><td>32</td><td>12</td><td>30</td><td>0</td><td>138</td></tr><tr><td class="position-MID">Mitoma</td><td>BHA</td><td>MID</td><td>38</td><td>32</td><td>25</td><td>23</td><td>0</td><td>118</td></tr><tr><td class="position-MID">Kulusevski</td><td>TOT</td><td>MID</td><td>41</td><td>40</td><td>16</td><td>13</td><td>0</td><td>110</td></tr><tr><td class="position-MID">L.Paquetá</td><td>WHU</td><td>MID</td><td>29</td><td>25</td><td>10</td><td>5</td><td>0</td><td>69</td></tr><tr><td class="position-MID">Wharton</td><td>CRY</td><td>MID</td><td>15</td><td>0</td><td>1</td><td>6</td><td>0</td><td>22</td></tr><tr><td class="position-FWD">Højlund</td><td>MUN</td><td>FWD</td><td>21</td><td>19</td><td>4</td><td>13</td><td>0</td><td>57</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Ed" class="manager-squad">
+            <h2>Ed - 938 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Ederson M.</td><td>MCI</td><td>GKP</td><td>32</td><td>2</td><td>15</td><td>26</td><td>0</td><td>75</td></tr><tr><td class="position-DEF">Rúben</td><td>MCI</td><td>DEF</td><td>19</td><td>9</td><td>6</td><td>10</td><td>0</td><td>44</td></tr><tr><td class="position-DEF">Lacroix</td><td>CRY</td><td>DEF</td><td>-</td><td>-</td><td>-</td><td>18</td><td>0</td><td>18</td></tr><tr><td class="position-DEF">Mitchell</td><td>CRY</td><td>DEF</td><td>26</td><td>33</td><td>19</td><td>19</td><td>0</td><td>97</td></tr><tr><td class="position-DEF">Gvardiol</td><td>MCI</td><td>DEF</td><td>50</td><td>24</td><td>15</td><td>17</td><td>0</td><td>106</td></tr><tr><td class="position-MID">Tel</td><td>TOT</td><td>MID</td><td>-</td><td>-</td><td>-</td><td>10</td><td>0</td><td>10</td></tr><tr><td class="position-MID">Georginio</td><td>BHA</td><td>MID</td><td>40</td><td>17</td><td>15</td><td>23</td><td>0</td><td>95</td></tr><tr><td class="position-MID">Souček</td><td>WHU</td><td>MID</td><td>32</td><td>33</td><td>11</td><td>25</td><td>0</td><td>101</td></tr><tr><td class="position-MID">Bernardo</td><td>MCI</td><td>MID</td><td>-</td><td>-</td><td>-</td><td>4</td><td>0</td><td>4</td></tr><tr><td class="position-MID">Son</td><td>TOT</td><td>MID</td><td>47</td><td>35</td><td>22</td><td>19</td><td>0</td><td>123</td></tr><tr><td class="position-FWD">Solanke</td><td>TOT</td><td>FWD</td><td>43</td><td>40</td><td>0</td><td>4</td><td>0</td><td>87</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-DEF">Burn</td><td>NEW</td><td>DEF</td><td>27</td><td>31</td><td>8</td><td>-</td><td>-</td><td>66</td></tr><tr class="past-player"><td class="position-MID">Summerville</td><td>WHU</td><td>MID</td><td>18</td><td>-</td><td>-</td><td>-</td><td>-</td><td>18</td></tr><tr class="past-player"><td class="position-MID">Hudson-Odoi</td><td>NFO</td><td>MID</td><td>38</td><td>24</td><td>8</td><td>-</td><td>-</td><td>70</td></tr><tr class="past-player"><td class="position-FWD">Calvert-Lewin</td><td>EVE</td><td>FWD</td><td>-</td><td>16</td><td>8</td><td>-</td><td>-</td><td>24</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Louise-Hadfield" class="manager-squad">
+            <h2>Louise Hadfield - 895 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Pickford</td><td>EVE</td><td>GKP</td><td>46</td><td>41</td><td>18</td><td>11</td><td>0</td><td>116</td></tr><tr><td class="position-DEF">Trippier</td><td>NEW</td><td>DEF</td><td>13</td><td>10</td><td>2</td><td>9</td><td>0</td><td>34</td></tr><tr><td class="position-DEF">Shaw</td><td>MUN</td><td>DEF</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>2</td></tr><tr><td class="position-DEF">Aké</td><td>MCI</td><td>DEF</td><td>2</td><td>21</td><td>1</td><td>1</td><td>0</td><td>25</td></tr><tr><td class="position-DEF">Maguire</td><td>MUN</td><td>DEF</td><td>8</td><td>7</td><td>9</td><td>11</td><td>0</td><td>35</td></tr><tr><td class="position-MID">Rashford</td><td>AVL</td><td>MID</td><td>30</td><td>24</td><td>0</td><td>20</td><td>0</td><td>74</td></tr><tr><td class="position-MID">Kluivert</td><td>BOU</td><td>MID</td><td>35</td><td>43</td><td>45</td><td>24</td><td>0</td><td>147</td></tr><tr><td class="position-MID">B.Fernandes</td><td>MUN</td><td>MID</td><td>50</td><td>38</td><td>16</td><td>48</td><td>0</td><td>152</td></tr><tr><td class="position-MID">Nkunku</td><td>CHE</td><td>MID</td><td>15</td><td>21</td><td>2</td><td>20</td><td>0</td><td>58</td></tr><tr><td class="position-MID">Iwobi</td><td>FUL</td><td>MID</td><td>47</td><td>40</td><td>20</td><td>13</td><td>0</td><td>120</td></tr><tr><td class="position-FWD">Wissa</td><td>BRE</td><td>FWD</td><td>54</td><td>37</td><td>12</td><td>29</td><td>0</td><td>132</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Rich-Hadfield" class="manager-squad">
+            <h2>Rich Hadfield - 875 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Raya</td><td>ARS</td><td>GKP</td><td>42</td><td>36</td><td>15</td><td>24</td><td>0</td><td>117</td></tr><tr><td class="position-DEF">Lewis</td><td>MCI</td><td>DEF</td><td>30</td><td>16</td><td>1</td><td>9</td><td>0</td><td>56</td></tr><tr><td class="position-DEF">Wan-Bissaka</td><td>WHU</td><td>DEF</td><td>-</td><td>-</td><td>5</td><td>25</td><td>0</td><td>30</td></tr><tr><td class="position-DEF">J.Timber</td><td>ARS</td><td>DEF</td><td>24</td><td>40</td><td>9</td><td>28</td><td>0</td><td>101</td></tr><tr><td class="position-DEF">Zabarnyi</td><td>BOU</td><td>DEF</td><td>-</td><td>-</td><td>9</td><td>1</td><td>0</td><td>10</td></tr><tr><td class="position-MID">Schade</td><td>BRE</td><td>MID</td><td>-</td><td>-</td><td>15</td><td>19</td><td>0</td><td>34</td></tr><tr><td class="position-MID">Bruno G.</td><td>NEW</td><td>MID</td><td>28</td><td>40</td><td>19</td><td>16</td><td>0</td><td>103</td></tr><tr><td class="position-MID">Savinho</td><td>MCI</td><td>MID</td><td>29</td><td>38</td><td>10</td><td>14</td><td>0</td><td>91</td></tr><tr><td class="position-MID">Foden</td><td>MCI</td><td>MID</td><td>16</td><td>30</td><td>43</td><td>10</td><td>0</td><td>99</td></tr><tr><td class="position-MID">Diogo J.</td><td>LIV</td><td>MID</td><td>35</td><td>17</td><td>8</td><td>12</td><td>0</td><td>72</td></tr><tr><td class="position-FWD">Strand Larsen</td><td>WOL</td><td>FWD</td><td>-</td><td>-</td><td>5</td><td>16</td><td>0</td><td>21</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-DEF">Gusto</td><td>CHE</td><td>DEF</td><td>11</td><td>-</td><td>-</td><td>-</td><td>-</td><td>11</td></tr><tr class="past-player"><td class="position-DEF">Livramento</td><td>NEW</td><td>DEF</td><td>27</td><td>19</td><td>-</td><td>-</td><td>-</td><td>46</td></tr><tr class="past-player"><td class="position-MID">Doku</td><td>MCI</td><td>MID</td><td>22</td><td>24</td><td>-</td><td>-</td><td>-</td><td>46</td></tr><tr class="past-player"><td class="position-FWD">Antonio</td><td>WHU</td><td>FWD</td><td>-</td><td>5</td><td>-</td><td>-</td><td>-</td><td>5</td></tr><tr class="past-player"><td class="position-FWD">Darwin</td><td>LIV</td><td>FWD</td><td>23</td><td>10</td><td>-</td><td>-</td><td>-</td><td>33</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Michelle-H" class="manager-squad">
+            <h2>Michelle H - 862 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Sels</td><td>NFO</td><td>GKP</td><td>-</td><td>44</td><td>13</td><td>18</td><td>0</td><td>75</td></tr><tr><td class="position-DEF">Dalot</td><td>MUN</td><td>DEF</td><td>39</td><td>15</td><td>9</td><td>20</td><td>0</td><td>83</td></tr><tr><td class="position-DEF">Dunk</td><td>BHA</td><td>DEF</td><td>22</td><td>14</td><td>2</td><td>0</td><td>0</td><td>38</td></tr><tr><td class="position-DEF">Branthwaite</td><td>EVE</td><td>DEF</td><td>10</td><td>27</td><td>21</td><td>9</td><td>0</td><td>67</td></tr><tr><td class="position-DEF">Schär</td><td>NEW</td><td>DEF</td><td>22</td><td>33</td><td>3</td><td>8</td><td>0</td><td>66</td></tr><tr><td class="position-MID">Amad</td><td>MUN</td><td>MID</td><td>27</td><td>53</td><td>27</td><td>0</td><td>0</td><td>107</td></tr><tr><td class="position-MID">Elanga</td><td>NFO</td><td>MID</td><td>25</td><td>43</td><td>24</td><td>26</td><td>0</td><td>118</td></tr><tr><td class="position-MID">Garnacho</td><td>MUN</td><td>MID</td><td>40</td><td>12</td><td>9</td><td>17</td><td>0</td><td>78</td></tr><tr><td class="position-MID">Mainoo</td><td>MUN</td><td>MID</td><td>13</td><td>13</td><td>6</td><td>0</td><td>0</td><td>32</td></tr><tr><td class="position-MID">Chiesa</td><td>LIV</td><td>MID</td><td>1</td><td>0</td><td>2</td><td>0</td><td>0</td><td>3</td></tr><tr><td class="position-FWD">Isak</td><td>NEW</td><td>FWD</td><td>47</td><td>72</td><td>33</td><td>17</td><td>0</td><td>169</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-GKP">Ramsdale</td><td>SOU</td><td>GKP</td><td>26</td><td>-</td><td>-</td><td>-</td><td>-</td><td>26</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Monkey" class="manager-squad">
+            <h2>Monkey - 858 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">A.Becker</td><td>LIV</td><td>GKP</td><td>35</td><td>11</td><td>23</td><td>21</td><td>0</td><td>90</td></tr><tr><td class="position-DEF">Cucurella</td><td>CHE</td><td>DEF</td><td>18</td><td>28</td><td>13</td><td>34</td><td>0</td><td>93</td></tr><tr><td class="position-DEF">Kerkez</td><td>BOU</td><td>DEF</td><td>-</td><td>-</td><td>15</td><td>15</td><td>0</td><td>30</td></tr><tr><td class="position-DEF">Tarkowski</td><td>EVE</td><td>DEF</td><td>30</td><td>29</td><td>27</td><td>9</td><td>0</td><td>95</td></tr><tr><td class="position-DEF">De Ligt</td><td>MUN</td><td>DEF</td><td>35</td><td>8</td><td>5</td><td>18</td><td>0</td><td>66</td></tr><tr><td class="position-MID">Alcaraz</td><td>EVE</td><td>MID</td><td>-</td><td>-</td><td>-</td><td>18</td><td>0</td><td>18</td></tr><tr><td class="position-MID">Eze</td><td>CRY</td><td>MID</td><td>31</td><td>28</td><td>15</td><td>12</td><td>0</td><td>86</td></tr><tr><td class="position-MID">Barnes</td><td>NEW</td><td>MID</td><td>49</td><td>16</td><td>0</td><td>8</td><td>0</td><td>73</td></tr><tr><td class="position-FWD">Gakpo</td><td>LIV</td><td>FWD</td><td>22</td><td>45</td><td>27</td><td>2</td><td>0</td><td>96</td></tr><tr><td class="position-FWD">Ndiaye</td><td>EVE</td><td>FWD</td><td>33</td><td>22</td><td>26</td><td>0</td><td>0</td><td>81</td></tr><tr><td class="position-FWD">Beto</td><td>EVE</td><td>FWD</td><td>-</td><td>-</td><td>-</td><td>28</td><td>0</td><td>28</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-DEF">White</td><td>ARS</td><td>DEF</td><td>27</td><td>0</td><td>-</td><td>-</td><td>-</td><td>27</td></tr><tr class="past-player"><td class="position-MID">Szmodics</td><td>IPS</td><td>MID</td><td>34</td><td>18</td><td>0</td><td>-</td><td>-</td><td>52</td></tr><tr class="past-player"><td class="position-MID">João Félix</td><td>CHE</td><td>MID</td><td>9</td><td>-</td><td>-</td><td>-</td><td>-</td><td>9</td></tr><tr class="past-player"><td class="position-MID">McNeil</td><td>EVE</td><td>MID</td><td>-</td><td>14</td><td>0</td><td>-</td><td>-</td><td>14</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Dave-H" class="manager-squad">
+            <h2>Dave H - 838 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Henderson</td><td>CRY</td><td>GKP</td><td>36</td><td>30</td><td>20</td><td>20</td><td>0</td><td>106</td></tr><tr><td class="position-DEF">Chalobah</td><td>CHE</td><td>DEF</td><td>20</td><td>34</td><td>10</td><td>3</td><td>0</td><td>67</td></tr><tr><td class="position-DEF">Martinez</td><td>MUN</td><td>DEF</td><td>29</td><td>21</td><td>18</td><td>0</td><td>0</td><td>68</td></tr><tr><td class="position-DEF">Yoro</td><td>MUN</td><td>DEF</td><td>-</td><td>-</td><td>4</td><td>2</td><td>0</td><td>6</td></tr><tr><td class="position-DEF">Andersen</td><td>FUL</td><td>DEF</td><td>20</td><td>2</td><td>10</td><td>9</td><td>0</td><td>41</td></tr><tr><td class="position-MID">Tonali</td><td>NEW</td><td>MID</td><td>14</td><td>19</td><td>15</td><td>8</td><td>0</td><td>56</td></tr><tr><td class="position-MID">Enzo</td><td>CHE</td><td>MID</td><td>19</td><td>47</td><td>8</td><td>19</td><td>0</td><td>93</td></tr><tr><td class="position-MID">Ugarte</td><td>MUN</td><td>MID</td><td>8</td><td>10</td><td>3</td><td>13</td><td>0</td><td>34</td></tr><tr><td class="position-MID">Andreas</td><td>FUL</td><td>MID</td><td>31</td><td>17</td><td>6</td><td>16</td><td>0</td><td>70</td></tr><tr><td class="position-FWD">Haaland</td><td>MCI</td><td>FWD</td><td>82</td><td>41</td><td>26</td><td>22</td><td>0</td><td>171</td></tr><tr><td class="position-FWD">Vardy</td><td>LEI</td><td>FWD</td><td>-</td><td>-</td><td>14</td><td>10</td><td>0</td><td>24</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-DEF">Gabriel</td><td>ARS</td><td>DEF</td><td>45</td><td>38</td><td>-</td><td>-</td><td>-</td><td>83</td></tr><tr class="past-player"><td class="position-MID">Sinisterra</td><td>BOU</td><td>MID</td><td>19</td><td>0</td><td>-</td><td>-</td><td>-</td><td>19</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Shergs" class="manager-squad">
+            <h2>Shergs - 832 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Sánchez</td><td>CHE</td><td>GKP</td><td>44</td><td>25</td><td>5</td><td>12</td><td>0</td><td>86</td></tr><tr><td class="position-DEF">Coufal</td><td>WHU</td><td>DEF</td><td>9</td><td>4</td><td>5</td><td>0</td><td>0</td><td>18</td></tr><tr><td class="position-DEF">Pedro Porro</td><td>TOT</td><td>DEF</td><td>35</td><td>34</td><td>14</td><td>10</td><td>0</td><td>93</td></tr><tr><td class="position-DEF">Veltman</td><td>BHA</td><td>DEF</td><td>32</td><td>12</td><td>8</td><td>6</td><td>0</td><td>58</td></tr><tr><td class="position-DEF">N.Williams</td><td>NFO</td><td>DEF</td><td>13</td><td>38</td><td>16</td><td>17</td><td>0</td><td>84</td></tr><tr><td class="position-MID">Johnson</td><td>TOT</td><td>MID</td><td>49</td><td>39</td><td>1</td><td>19</td><td>0</td><td>108</td></tr><tr><td class="position-MID">Madueke</td><td>CHE</td><td>MID</td><td>49</td><td>30</td><td>20</td><td>1</td><td>0</td><td>100</td></tr><tr><td class="position-MID">Thomas</td><td>ARS</td><td>MID</td><td>31</td><td>30</td><td>15</td><td>9</td><td>0</td><td>85</td></tr><tr><td class="position-MID">Bailey</td><td>AVL</td><td>MID</td><td>21</td><td>18</td><td>5</td><td>2</td><td>0</td><td>46</td></tr><tr><td class="position-FWD">Havertz</td><td>ARS</td><td>FWD</td><td>46</td><td>28</td><td>22</td><td>0</td><td>0</td><td>96</td></tr><tr><td class="position-FWD">Ferguson</td><td>WHU</td><td>FWD</td><td>-</td><td>-</td><td>-</td><td>5</td><td>0</td><td>5</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-FWD">Duran</td><td>AVL</td><td>FWD</td><td>31</td><td>20</td><td>2</td><td>-</td><td>-</td><td>53</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Moses" class="manager-squad">
+            <h2>Moses - 791 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Verbruggen</td><td>BHA</td><td>GKP</td><td>28</td><td>24</td><td>9</td><td>21</td><td>0</td><td>82</td></tr><tr><td class="position-DEF">Calafiori</td><td>ARS</td><td>DEF</td><td>14</td><td>12</td><td>8</td><td>3</td><td>0</td><td>37</td></tr><tr><td class="position-DEF">Kilman</td><td>WHU</td><td>DEF</td><td>27</td><td>14</td><td>5</td><td>20</td><td>0</td><td>66</td></tr><tr><td class="position-DEF">Van Hecke</td><td>BHA</td><td>DEF</td><td>23</td><td>20</td><td>10</td><td>24</td><td>0</td><td>77</td></tr><tr><td class="position-DEF">Pau</td><td>AVL</td><td>DEF</td><td>19</td><td>13</td><td>0</td><td>0</td><td>0</td><td>32</td></tr><tr><td class="position-MID">Hee Chan</td><td>WOL</td><td>MID</td><td>7</td><td>20</td><td>6</td><td>1</td><td>0</td><td>34</td></tr><tr><td class="position-MID">Martinelli</td><td>ARS</td><td>MID</td><td>47</td><td>26</td><td>16</td><td>4</td><td>0</td><td>93</td></tr><tr><td class="position-MID">Mac Allister</td><td>LIV</td><td>MID</td><td>20</td><td>33</td><td>18</td><td>16</td><td>0</td><td>87</td></tr><tr><td class="position-MID">Szoboszlai</td><td>LIV</td><td>MID</td><td>27</td><td>33</td><td>22</td><td>29</td><td>0</td><td>111</td></tr><tr><td class="position-MID">Ward-Prowse</td><td>WHU</td><td>MID</td><td>7</td><td>8</td><td>0</td><td>10</td><td>0</td><td>25</td></tr><tr><td class="position-FWD">Watkins</td><td>AVL</td><td>FWD</td><td>55</td><td>39</td><td>22</td><td>31</td><td>0</td><td>147</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-John" class="manager-squad">
+            <h2>John - 741 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Martinez</td><td>AVL</td><td>GKP</td><td>32</td><td>21</td><td>12</td><td>8</td><td>0</td><td>73</td></tr><tr><td class="position-DEF">Guéhi</td><td>CRY</td><td>DEF</td><td>37</td><td>18</td><td>30</td><td>16</td><td>0</td><td>101</td></tr><tr><td class="position-DEF">Stones</td><td>MCI</td><td>DEF</td><td>20</td><td>1</td><td>1</td><td>7</td><td>0</td><td>29</td></tr><tr><td class="position-DEF">Tomiyasu</td><td>ARS</td><td>DEF</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td class="position-DEF">Zinchenko</td><td>ARS</td><td>DEF</td><td>8</td><td>8</td><td>1</td><td>2</td><td>0</td><td>19</td></tr><tr><td class="position-MID">Bowen</td><td>WHU</td><td>MID</td><td>50</td><td>40</td><td>10</td><td>25</td><td>0</td><td>125</td></tr><tr><td class="position-MID">Saka</td><td>ARS</td><td>MID</td><td>67</td><td>40</td><td>0</td><td>0</td><td>0</td><td>107</td></tr><tr><td class="position-MID">Gündogan</td><td>MCI</td><td>MID</td><td>21</td><td>13</td><td>6</td><td>15</td><td>0</td><td>55</td></tr><tr><td class="position-MID">Trossard</td><td>ARS</td><td>MID</td><td>31</td><td>30</td><td>24</td><td>15</td><td>0</td><td>100</td></tr><tr><td class="position-FWD">Wilson</td><td>NEW</td><td>FWD</td><td>0</td><td>3</td><td>0</td><td>5</td><td>0</td><td>8</td></tr><tr><td class="position-FWD">Mateta</td><td>CRY</td><td>FWD</td><td>35</td><td>32</td><td>36</td><td>20</td><td>0</td><td>123</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Pony" class="manager-squad">
+            <h2>Pony - 489 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">José Sá</td><td>WOL</td><td>GKP</td><td>13</td><td>24</td><td>12</td><td>17</td><td>0</td><td>66</td></tr><tr><td class="position-DEF">Gomez</td><td>LIV</td><td>DEF</td><td>3</td><td>11</td><td>0</td><td>0</td><td>0</td><td>14</td></tr><tr><td class="position-DEF">Emerson</td><td>WHU</td><td>DEF</td><td>19</td><td>24</td><td>14</td><td>4</td><td>0</td><td>61</td></tr><tr><td class="position-DEF">Senesi</td><td>BOU</td><td>DEF</td><td>19</td><td>2</td><td>0</td><td>0</td><td>0</td><td>21</td></tr><tr><td class="position-DEF">Smith</td><td>BOU</td><td>DEF</td><td>18</td><td>16</td><td>0</td><td>0</td><td>0</td><td>34</td></tr><tr><td class="position-MID">Sancho</td><td>CHE</td><td>MID</td><td>19</td><td>32</td><td>6</td><td>11</td><td>0</td><td>68</td></tr><tr><td class="position-MID">Mudryk</td><td>CHE</td><td>MID</td><td>7</td><td>0</td><td>0</td><td>0</td><td>0</td><td>7</td></tr><tr><td class="position-MID">Joelinton</td><td>NEW</td><td>MID</td><td>36</td><td>33</td><td>7</td><td>3</td><td>0</td><td>79</td></tr><tr><td class="position-MID">Tielemans</td><td>AVL</td><td>MID</td><td>34</td><td>18</td><td>14</td><td>19</td><td>0</td><td>85</td></tr><tr><td class="position-MID">Werner</td><td>TOT</td><td>MID</td><td>14</td><td>19</td><td>0</td><td>1</td><td>0</td><td>34</td></tr><tr><td class="position-FWD">Richarlison</td><td>TOT</td><td>FWD</td><td>7</td><td>0</td><td>13</td><td>0</td><td>0</td><td>20</td></tr>
+            </table>
+        </div>
+        
+        <div id="manager-Young-Hadfields" class="manager-squad">
+            <h2>Young Hadfields - 485 Points</h2>
+            <table class="squad-table">
+                <tr>
+                    <th>Player</th>
+                    <th>Team</th>
+                    <th>Position</th>
+                    <th>Phase 1</th>
+                    <th>Phase 2</th>
+                    <th>Phase 3</th>
+                    <th>Phase 4</th>
+                    <th>Phase 5</th>
+                    <th>Total Points</th>
+                </tr>
+        
+            <tr class="current-players-header">
+                <td colspan="9">
+                    <strong>Current Squad (Phase 5)</strong>
+                </td>
+            </tr>
+            <tr><td class="position-GKP">Onana</td><td>MUN</td><td>GKP</td><td>53</td><td>19</td><td>11</td><td>18</td><td>0</td><td>101</td></tr><tr><td class="position-DEF">Walker</td><td>MCI</td><td>DEF</td><td>8</td><td>5</td><td>0</td><td>0</td><td>0</td><td>13</td></tr><tr><td class="position-DEF">Sugawara</td><td>SOU</td><td>DEF</td><td>24</td><td>10</td><td>2</td><td>3</td><td>0</td><td>39</td></tr><tr><td class="position-DEF">Van de Ven</td><td>TOT</td><td>DEF</td><td>27</td><td>1</td><td>0</td><td>1</td><td>0</td><td>29</td></tr><tr><td class="position-DEF">Udogie</td><td>TOT</td><td>DEF</td><td>23</td><td>14</td><td>0</td><td>6</td><td>0</td><td>43</td></tr><tr><td class="position-MID">Odobert</td><td>TOT</td><td>MID</td><td>6</td><td>0</td><td>0</td><td>7</td><td>0</td><td>13</td></tr><tr><td class="position-MID">Onana</td><td>AVL</td><td>MID</td><td>31</td><td>6</td><td>4</td><td>0</td><td>0</td><td>41</td></tr><tr><td class="position-MID">Rice</td><td>ARS</td><td>MID</td><td>19</td><td>33</td><td>17</td><td>20</td><td>0</td><td>89</td></tr><tr><td class="position-MID">Buonanotte</td><td>LEI</td><td>MID</td><td>-</td><td>-</td><td>3</td><td>5</td><td>0</td><td>8</td></tr><tr><td class="position-MID">Sterling</td><td>ARS</td><td>MID</td><td>4</td><td>5</td><td>3</td><td>5</td><td>0</td><td>17</td></tr><tr><td class="position-FWD">Welbeck</td><td>BHA</td><td>FWD</td><td>64</td><td>5</td><td>6</td><td>17</td><td>0</td><td>92</td></tr>
+            <tr class="past-players-header">
+                <td colspan="9">
+                    <strong>Previous Players (No Longer in Current Squad)</strong>
+                </td>
+            </tr>
+            <tr class="past-player"><td class="position-MID">Bobb</td><td>MCI</td><td>MID</td><td>0</td><td>0</td><td>-</td><td>-</td><td>-</td><td>0</td></tr>
+            </table>
+        </div>
+        
+        </div>
+        
+        <script>
+            function showTab(tabId) {
+                // Hide all tabs
+                const tabContents = document.getElementsByClassName('tab-content');
+                for (let i = 0; i < tabContents.length; i++) {
+                    tabContents[i].classList.remove('active');
+                }
+                
+                // Show selected tab
+                document.getElementById(tabId).classList.add('active');
+                
+                // Update tab buttons
+                const tabs = document.getElementsByClassName('tab');
+                for (let i = 0; i < tabs.length; i++) {
+                    tabs[i].classList.remove('active');
+                }
+                
+                // Highlight selected tab button
+                event.currentTarget.classList.add('active');
+                
+                // Reset manager dropdown if switching to squad tab
+                if (tabId === 'squads-tab') {
+                    document.getElementById('manager-dropdown').selectedIndex = 0;
+                    hideAllManagers();
+                }
+            }
+            
+            function showManager(managerName) {
+                // Hide all manager squads
+                hideAllManagers();
+                
+                // Show the selected manager if a value is selected
+                if (managerName) {
+                    const managerElement = document.getElementById('manager-' + managerName.replace(/[^a-zA-Z0-9]/g, '-'));
+                    if (managerElement) {
+                        managerElement.classList.add('active');
+                    }
+                }
+            }
+            
+            function hideAllManagers() {
+                const managerSquads = document.getElementsByClassName('manager-squad');
+                for (let i = 0; i < managerSquads.length; i++) {
+                    managerSquads[i].classList.remove('active');
+                }
+            }
+            
+            // Initialize by hiding all managers when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                hideAllManagers();
+            });
+        </script>
+    </body>
+    </html>
+    

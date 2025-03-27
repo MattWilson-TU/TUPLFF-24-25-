@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Football Tracker - Loading</title>
+    <meta http-equiv="refresh" content="3;url=fantasy_football.html">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5d76e; /* Gold background color */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for better readability */
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+        }
+        
+        p {
+            color: #555;
+            margin-bottom: 30px;
+        }
+        
+        /* Enhanced centered spinner */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .spinner {
+            width: 100px; /* Increased width */
+            text-align: center;
+            margin: 0 auto;
+        }
+        
+        .spinner > div {
+            width: 20px; /* Slightly larger dots */
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 100%;
+            display: inline-block;
+            animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+            margin: 0 5px; /* More spacing between dots */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Add shadow for depth */
+        }
+        
+        .spinner .bounce1 {
+            background-color: #3498db; /* Different color for visual interest */
+            animation-delay: -0.32s;
+        }
+        
+        .spinner .bounce2 {
+            background-color: #f39c12; /* Different color for visual interest */
+            animation-delay: -0.16s;
+        }
+        
+        .spinner .bounce3 {
+            background-color: #4CAF50; /* Keep the original color */
+        }
+        
+        @keyframes sk-bouncedelay {
+            0%, 80%, 100% { 
+                transform: scale(0);
+            } 40% { 
+                transform: scale(1.0);
+            }
+        }
+        
+        .redirect-text {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        
+        .manual-link {
+            color: #2196f3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .manual-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thunder Unicorn <br>
+            Fantasy Football Tracker<br>
+            Season 24-25</h1>
+        <p>Loading the latest fantasy football stats and rankings...</p>
+        
+        <div class="spinner-container">
+            <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        
+        <p class="redirect-text">
+            You will be redirected automatically in 3 seconds.<br>
+            If not, please <a href="fantasy_football.html" class="manual-link">click here</a>.
+        </p>
+    </div>
+
+    <script>
+        // Fallback JavaScript redirect in case meta refresh doesn't work
+        setTimeout(function() {
+            window.location.href = "fantasy_football.html";
+        }, 3000);
+    </script>
+</body>
+</html> 
