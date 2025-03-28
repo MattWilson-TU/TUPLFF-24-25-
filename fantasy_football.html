@@ -149,6 +149,34 @@
                 min-width: 120px;
             }
             
+            /* Position change indicators */
+            .position-up {
+                color: #2ecc71;
+                font-weight: bold;
+            }
+            
+            .position-down {
+                color: #e74c3c;
+                font-weight: bold;
+            }
+            
+            .position-same {
+                color: #7f8c8d;
+            }
+            
+            .position-new {
+                color: #3498db;
+                font-style: italic;
+            }
+            
+            /* Diff Rank styling */
+            .diff-top3 {
+                color: #f39c12;
+                font-weight: bold;
+            }
+            
+            /* Removed highlighting for the Weekly Points column */
+            
             /* Tab styling */
             .tabs-container {
                 display: flex;
@@ -405,8 +433,8 @@
     <body>
         <h1>Fantasy Football Tracker</h1>
         <div class="status-info">
-            <p>Last updated: 2025-03-28 14:45:57</p>
-            <p>Current Gameweek: 29</p>
+            <p>Last updated: 2025-03-28 16:32:15</p>
+            <p>Last Gameweek: 29</p>
         </div>
         
         <div id="loading">
@@ -436,155 +464,189 @@
                 <th>Position</th>
                 <th>Manager</th>
                 <th>Total Points</th>
-                <th>Gap to Manager Above</th>
+                <th>Weekly Points</th>
+                <th>Gap to Above</th>
                 <th>Gap to Top</th>
-                <th>Diff from Phase 1</th>
+                <th>WD Points</th>
+                <th>WD Pos</th>
             </tr>
         </thead>
         <tbody>
     
         <tr>
             <td>1</td>
-            <td>AVO</td>
+            <td><span class="position-same">–</span> AVO</td>
             <td>1131</td>
+            <td>34</td>
             <td>-</td>
             <td>-</td>
             <td>+107</td>
+            <td class='position-up'>1</td>
         </tr>
         
         <tr>
             <td>2</td>
-            <td>Dil</td>
+            <td><span class="position-same">–</span> Dil</td>
             <td>1029</td>
+            <td>19</td>
             <td>102</td>
             <td>102</td>
             <td>+29</td>
+            <td >5</td>
         </tr>
         
         <tr>
             <td>3</td>
-            <td>Shotgun</td>
+            <td><span class="position-up">▲</span> Shotgun</td>
             <td>995</td>
+            <td>23</td>
             <td>34</td>
             <td>136</td>
             <td>+0</td>
+            <td >12</td>
         </tr>
         
         <tr>
             <td>4</td>
-            <td>Fridge</td>
+            <td><span class="position-down">▼</span> Fridge</td>
             <td>994</td>
+            <td>19</td>
             <td>1</td>
             <td>137</td>
             <td>+70</td>
+            <td class='diff-top3'>3</td>
         </tr>
         
         <tr>
             <td>5</td>
-            <td>Scum</td>
+            <td><span class="position-same">–</span> Scum</td>
             <td>960</td>
+            <td>23</td>
             <td>34</td>
             <td>171</td>
             <td>+0</td>
+            <td >15</td>
         </tr>
         
         <tr>
             <td>6</td>
-            <td>Ed</td>
+            <td><span class="position-same">–</span> Ed</td>
             <td>938</td>
+            <td>24</td>
             <td>22</td>
             <td>193</td>
             <td>+9</td>
+            <td >6</td>
         </tr>
         
         <tr>
             <td>7</td>
-            <td>Louise</td>
+            <td><span class="position-same">–</span> Louise</td>
             <td>895</td>
+            <td>35</td>
             <td>43</td>
             <td>236</td>
             <td>+0</td>
+            <td >14</td>
         </tr>
         
         <tr>
             <td>8</td>
-            <td>Rich</td>
+            <td><span class="position-same">–</span> Rich</td>
             <td>875</td>
+            <td>35</td>
             <td>20</td>
             <td>256</td>
             <td>+3</td>
+            <td >9</td>
         </tr>
         
         <tr>
             <td>9</td>
-            <td>Michelle</td>
+            <td><span class="position-up">▲</span> Michelle</td>
             <td>862</td>
+            <td>38</td>
             <td>13</td>
             <td>269</td>
             <td>+44</td>
+            <td >4</td>
         </tr>
         
         <tr>
             <td>10</td>
-            <td>Monkey</td>
+            <td><span class="position-down">▼</span> Monkey</td>
             <td>858</td>
+            <td>27</td>
             <td>4</td>
             <td>273</td>
             <td>+72</td>
+            <td class='diff-top3'>2</td>
         </tr>
         
         <tr>
             <td>11</td>
-            <td>Dave</td>
+            <td><span class="position-up">▲</span> Dave</td>
             <td>838</td>
+            <td>26</td>
             <td>20</td>
             <td>293</td>
             <td>-7</td>
+            <td >16</td>
         </tr>
         
         <tr>
             <td>12</td>
-            <td>Shergs</td>
+            <td><span class="position-down">▼</span> Shergs</td>
             <td>832</td>
+            <td>8</td>
             <td>6</td>
             <td>299</td>
             <td>+5</td>
+            <td >8</td>
         </tr>
         
         <tr>
             <td>13</td>
-            <td>Moses</td>
+            <td><span class="position-same">–</span> Moses</td>
             <td>791</td>
+            <td>8</td>
             <td>41</td>
             <td>340</td>
             <td>+0</td>
+            <td >10</td>
         </tr>
         
         <tr>
             <td>14</td>
-            <td>John</td>
+            <td><span class="position-same">–</span> John</td>
             <td>741</td>
+            <td>15</td>
             <td>50</td>
             <td>390</td>
             <td>+0</td>
+            <td >11</td>
         </tr>
         
         <tr>
             <td>15</td>
-            <td>Pony</td>
+            <td><span class="position-same">–</span> Pony</td>
             <td>489</td>
+            <td>6</td>
             <td>252</td>
             <td>642</td>
             <td>+0</td>
+            <td >13</td>
         </tr>
         
         <tr>
             <td>16</td>
-            <td>Young H</td>
+            <td><span class="position-same">–</span> Young H</td>
             <td>485</td>
+            <td>15</td>
             <td>4</td>
             <td>646</td>
             <td>+8</td>
+            <td >7</td>
         </tr>
         
         </tbody>
