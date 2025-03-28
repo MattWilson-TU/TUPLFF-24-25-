@@ -6,10 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Fantasy Football Tracker</title>
         <style>
+            /* Base styles */
             body {
                 font-family: Arial, sans-serif;
                 margin: 0;
-                padding: 20px;
+                padding: 10px;
                 color: #333;
                 line-height: 1.6;
                 background-color: #f5d76e; /* Gold background color */
@@ -20,16 +21,23 @@
                 text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
             }
             
+            h1 {
+                font-size: 1.8em;
+                text-align: center;
+            }
+            
+            /* Base table styles */
             table {
                 border-collapse: collapse;
                 width: 100%;
                 margin-bottom: 20px;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-                background-color: white; /* Add white background to tables for contrast with gold body background */
+                background-color: white;
+                font-size: 14px;
             }
             
             th, td {
-                padding: 12px 15px;
+                padding: 8px 10px;
                 text-align: left;
                 border-bottom: 1px solid #ddd;
             }
@@ -38,10 +46,46 @@
                 background-color: #3498db;
                 color: white;
                 font-weight: bold;
+                position: sticky;
+                top: 0;
+                z-index: 10;
             }
             
             tr:hover {
                 background-color: #f5f5f5;
+            }
+            
+            /* Mobile table adjustments */
+            @media (max-width: 768px) {
+                .league-table {
+                    display: block;
+                    overflow-x: auto;
+                    white-space: nowrap;
+                }
+                
+                .squad-table {
+                    display: block;
+                    overflow-x: auto;
+                    white-space: nowrap;
+                }
+                
+                th, td {
+                    padding: 6px 8px;
+                    font-size: 12px;
+                }
+                
+                h1 {
+                    font-size: 1.5em;
+                }
+                
+                h2 {
+                    font-size: 1.3em;
+                }
+                
+                .tab {
+                    padding: 8px 12px;
+                    font-size: 14px;
+                }
             }
             
             .past-player {
@@ -92,19 +136,34 @@
             }
             
             .league-table {
-                max-width: 800px;
+                max-width: 100%;
                 margin: 0 auto;
             }
             
             .league-table th:first-child,
             .league-table td:first-child {
-                width: 60px;
+                width: 50px;
                 text-align: center;
             }
             
             .league-table th:nth-child(2),
             .league-table td:nth-child(2) {
-                width: 150px;
+                min-width: 120px;
+            }
+            
+            /* Tab styling */
+            .tabs-container {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+            
+            .tabs {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+                max-width: 500px;
             }
             
             .tab {
@@ -113,10 +172,12 @@
                 background-color: #f1f1f1;
                 cursor: pointer;
                 border-radius: 5px 5px 0 0;
-                margin-right: 5px;
+                margin: 0 2px 5px 2px;
                 border: 1px solid #ddd;
                 border-bottom: none;
                 box-shadow: 0 -2px 3px rgba(0,0,0,0.05);
+                text-align: center;
+                flex-grow: 1;
             }
             
             .tab.active {
@@ -127,7 +188,7 @@
             
             .tab-content {
                 display: none;
-                padding: 20px;
+                padding: 15px;
                 border: 1px solid #ddd;
                 border-radius: 0 5px 5px 5px;
                 margin-top: -1px;
@@ -144,7 +205,7 @@
             }
             
             .squad-info {
-                margin-bottom: 20px;
+                margin-bottom: 15px;
                 padding: 10px;
                 background-color: white;
                 border-left: 4px solid #2196f3;
@@ -158,7 +219,7 @@
             
             .manager-squad {
                 display: none;
-                margin-bottom: 40px;
+                margin-bottom: 20px;
                 border: 1px solid #ddd;
                 border-radius: 5px;
                 overflow: hidden;
@@ -180,7 +241,7 @@
             .highest-gameweek {
                 background-color: white;
                 padding: 10px;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
                 border-left: 4px solid #4CAF50;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
                 border-radius: 4px;
@@ -189,7 +250,7 @@
             .warning {
                 background-color: #fff3cd;
                 padding: 10px;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
                 border-left: 4px solid #ffc107;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
                 border-radius: 4px;
@@ -202,6 +263,9 @@
                 font-weight: bold;
                 border-left: 2px solid #4CAF50;
                 text-align: center;
+                position: sticky;
+                right: 0;
+                z-index: 5;
             }
             
             /* Preserve styling for past players' total points */
@@ -212,20 +276,25 @@
                 color: #777;
                 border-left: 2px solid rgba(76, 175, 80, 0.5);
                 text-align: center;
+                position: sticky;
+                right: 0;
             }
             
             /* Header for total points */
             .squad-table th:last-child {
                 background-color: #4CAF50;
                 color: white;
+                position: sticky;
+                right: 0;
+                z-index: 15;
             }
             
             /* Manager dropdown styling */
             .manager-selector {
-                margin-bottom: 20px;
+                margin-bottom: 15px;
                 width: 100%;
                 background-color: white;
-                padding: 15px;
+                padding: 12px;
                 border-radius: 5px;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
@@ -236,7 +305,6 @@
                 border: 1px solid #ddd;
                 border-radius: 4px;
                 width: 100%;
-                max-width: 400px;
                 margin-top: 10px;
                 background-color: white;
             }
@@ -249,12 +317,61 @@
             .squad-table tr.past-player:hover td {
                 background-color: rgba(245, 245, 245, 0.4);
             }
+            
+            /* Status info styling */
+            .status-info {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                text-align: center;
+                font-size: 0.9em;
+            }
+            
+            .status-info p {
+                margin: 5px;
+                flex: 1;
+                min-width: 200px;
+            }
+            
+            /* Loading indicator for mobile */
+            #loading {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(255, 255, 255, 0.8);
+                z-index: 999;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .loading-spinner {
+                width: 50px;
+                height: 50px;
+                border: 5px solid #f3f3f3;
+                border-top: 5px solid #3498db;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
         </style>
     </head>
     <body>
         <h1>Fantasy Football Tracker</h1>
-        <p>Last updated: 2025-03-27 16:53:09</p>
-        <p>Current Gameweek: 29</p>
+        <div class="status-info">
+            <p>Last updated: 2025-03-28 11:08:08</p>
+            <p>Current Gameweek: 29</p>
+        </div>
+        
+        <div id="loading">
+            <div class="loading-spinner"></div>
+        </div>
         
         
         <div class="highest-gameweek">
@@ -262,9 +379,11 @@
             <p>Michelle H: 38 points</p>
         </div>
         
-        <div class="tabs">
-            <div class="tab active" onclick="showTab('league-tab')">League Table</div>
-            <div class="tab" onclick="showTab('squads-tab')">Manager Squads</div>
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('league-tab')">League Table</div>
+                <div class="tab" onclick="showTab('squads-tab')">Manager Squads</div>
+            </div>
         </div>
         
         <div id="league-tab" class="tab-content active">
@@ -435,9 +554,8 @@
         <div id="squads-tab" class="tab-content">
             <h2>Manager Squads</h2>
             <div class="squad-info">
-                <p>Players are grouped by position through color-coding on the left border (GKP, DEF, MID, FWD). The points shown are the total points accumulated by each player during that phase.</p>
-                <p>The <strong>Current Squad</strong> section shows the players in the latest phase (Phase 5). <strong>Previous Players</strong> section shows players that were in the squad in earlier phases but are no longer in the current squad.</p>
-                <p>The <strong>Total Points</strong> column shows the combined points from all phases in which the player was selected by this manager.</p>
+                <p>Players are grouped by position through color-coding on the left border. Swipe horizontally to see all phases. <strong>Total Points</strong> column is fixed on the right.</p>
+                <p>The <strong>Current Squad</strong> shows the latest phase, while <strong>Previous Players</strong> shows players no longer in the current squad.</p>
             </div>
             
             <div class="manager-selector">
@@ -897,6 +1015,11 @@
         
         <script>
             function showTab(tabId) {
+                // Show loading spinner on mobile
+                if (window.innerWidth <= 768) {
+                    document.getElementById('loading').style.display = 'flex';
+                }
+                
                 // Hide all tabs
                 const tabContents = document.getElementsByClassName('tab-content');
                 for (let i = 0; i < tabContents.length; i++) {
@@ -920,9 +1043,19 @@
                     document.getElementById('manager-dropdown').selectedIndex = 0;
                     hideAllManagers();
                 }
+                
+                // Hide loading spinner after a short delay
+                setTimeout(function() {
+                    document.getElementById('loading').style.display = 'none';
+                }, 300);
             }
             
             function showManager(managerName) {
+                // Show loading spinner on mobile
+                if (window.innerWidth <= 768) {
+                    document.getElementById('loading').style.display = 'flex';
+                }
+                
                 // Hide all manager squads
                 hideAllManagers();
                 
@@ -931,8 +1064,18 @@
                     const managerElement = document.getElementById('manager-' + managerName.replace(/[^a-zA-Z0-9]/g, '-'));
                     if (managerElement) {
                         managerElement.classList.add('active');
+                        
+                        // Scroll to the manager's squad
+                        setTimeout(function() {
+                            managerElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+                        }, 100);
                     }
                 }
+                
+                // Hide loading spinner after a short delay
+                setTimeout(function() {
+                    document.getElementById('loading').style.display = 'none';
+                }, 300);
             }
             
             function hideAllManagers() {
@@ -945,6 +1088,15 @@
             // Initialize by hiding all managers when page loads
             document.addEventListener('DOMContentLoaded', function() {
                 hideAllManagers();
+                document.getElementById('loading').style.display = 'none';
+                
+                // Add touchstart event listener for faster mobile response
+                const tabs = document.getElementsByClassName('tab');
+                for (let i = 0; i < tabs.length; i++) {
+                    tabs[i].addEventListener('touchstart', function(e) {
+                        e.target.click();
+                    }, { passive: true });
+                }
             });
         </script>
     </body>

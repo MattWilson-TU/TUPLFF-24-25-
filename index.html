@@ -20,7 +20,8 @@
         
         .container {
             text-align: center;
-            max-width: 600px;
+            max-width: 90%;
+            width: 600px;
             margin: 0 auto;
             padding: 20px;
             background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for better readability */
@@ -32,6 +33,22 @@
             color: #2c3e50;
             margin-bottom: 20px;
             text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+            font-size: 1.8em;
+        }
+        
+        /* Responsive font size for mobile */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            p {
+                font-size: 0.9em;
+            }
+            
+            .redirect-text {
+                font-size: 0.8em;
+            }
         }
         
         p {
