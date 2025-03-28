@@ -8,51 +8,105 @@
         <style>
             /* Base styles */
             body {
-                font-family: Arial, sans-serif;
+                font-family: 'Segoe UI', Roboto, Arial, sans-serif;
                 margin: 0;
-                padding: 10px;
+                padding: 20px;
                 color: #333;
                 line-height: 1.6;
-                background-color: #f5d76e; /* Gold background color */
+                background-color: #f5f8fa;
+                opacity: 0;
+                animation: fadeInPage 0.8s ease-in forwards;
+            }
+            
+            @keyframes fadeInPage {
+                from { opacity: 0; }
+                to { opacity: 1; }
             }
             
             h1, h2, h3 {
                 color: #2c3e50;
-                text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+                font-weight: 600;
+                letter-spacing: -0.5px;
             }
             
             h1 {
-                font-size: 1.8em;
+                font-size: 2.2em;
                 text-align: center;
+                margin-bottom: 25px;
+                position: relative;
+                padding-bottom: 15px;
+            }
+            
+            h1:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80px;
+                height: 4px;
+                background: linear-gradient(to right, #3498db, #2c3e50);
+                border-radius: 2px;
             }
             
             /* Base table styles */
             table {
-                border-collapse: collapse;
+                border-collapse: separate;
+                border-spacing: 0;
                 width: 100%;
-                margin-bottom: 20px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+                margin-bottom: 25px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
                 background-color: white;
                 font-size: 14px;
+                border-radius: 8px;
+                overflow: hidden;
+                opacity: 0;
+                animation: fadeIn 0.5s ease-out 0.3s forwards;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
             }
             
             th, td {
-                padding: 8px 10px;
+                padding: 12px 15px;
                 text-align: left;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 1px solid #eee;
             }
             
             th {
-                background-color: #3498db;
+                background: linear-gradient(to right, #3498db, #2980b9);
                 color: white;
-                font-weight: bold;
+                font-weight: 600;
                 position: sticky;
                 top: 0;
                 z-index: 10;
+                text-transform: uppercase;
+                font-size: 12px;
+                letter-spacing: 0.5px;
+            }
+            
+            /* Alternating row colors for better readability */
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
             }
             
             tr:hover {
-                background-color: #f5f5f5;
+                background-color: #f0f7ff;
+                transition: background-color 0.2s ease;
+            }
+            
+            /* Row-by-row animation for league table */
+            .league-table tbody tr {
+                opacity: 0;
+                transform: translateX(-10px);
+                animation: slideInRow 0.5s ease forwards;
+            }
+            
+            @keyframes slideInRow {
+                from { opacity: 0; transform: translateX(-10px); }
+                to { opacity: 1; transform: translateX(0); }
             }
             
             /* Mobile table adjustments */
@@ -64,25 +118,25 @@
                 }
                 
                 th, td {
-                    padding: 6px 8px;
-                    font-size: 12px;
+                    padding: 10px 12px;
+                    font-size: 13px;
                 }
                 
                 h1 {
-                    font-size: 1.5em;
+                    font-size: 1.8em;
                 }
                 
                 h2 {
-                    font-size: 1.3em;
+                    font-size: 1.5em;
                 }
                 
                 .tab {
-                    padding: 8px 12px;
+                    padding: 10px 15px;
                     font-size: 14px;
                 }
                 
                 .filter-group {
-                    margin-bottom: 10px;
+                    margin-bottom: 15px;
                 }
             }
             
@@ -94,19 +148,19 @@
             
             /* Position coloring - applied directly to cells */
             td.position-GKP {
-                border-left: 3px solid #fdcb6e;
+                border-left: 4px solid #fdcb6e;
             }
             
             td.position-DEF {
-                border-left: 3px solid #00cec9;
+                border-left: 4px solid #00cec9;
             }
             
             td.position-MID {
-                border-left: 3px solid #6c5ce7;
+                border-left: 4px solid #6c5ce7;
             }
             
             td.position-FWD {
-                border-left: 3px solid #e17055;
+                border-left: 4px solid #e17055;
             }
             
             /* Past players header */
@@ -142,31 +196,53 @@
             .league-table td:first-child {
                 width: 50px;
                 text-align: center;
+                font-weight: bold;
             }
             
             .league-table th:nth-child(2),
             .league-table td:nth-child(2) {
-                min-width: 120px;
+                min-width: 180px;
             }
             
             /* Position change indicators */
             .position-up {
                 color: #2ecc71;
                 font-weight: bold;
+                display: inline-block;
+                margin-right: 5px;
+                animation: pulse 2s infinite;
+            }
+            
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+                100% { transform: scale(1); }
             }
             
             .position-down {
                 color: #e74c3c;
                 font-weight: bold;
+                display: inline-block;
+                margin-right: 5px;
             }
             
             .position-same {
                 color: #7f8c8d;
+                display: inline-block;
+                margin-right: 5px;
             }
             
             .position-new {
                 color: #3498db;
                 font-style: italic;
+                display: inline-block;
+                margin-right: 5px;
+                animation: glow 1.5s infinite alternate;
+            }
+            
+            @keyframes glow {
+                from { text-shadow: 0 0 0px #3498db; }
+                to { text-shadow: 0 0 5px #3498db, 0 0 10px #3498db; }
             }
             
             /* Diff Rank styling */
@@ -175,13 +251,13 @@
                 font-weight: bold;
             }
             
-            /* Removed highlighting for the Weekly Points column */
-            
             /* Tab styling */
             .tabs-container {
                 display: flex;
                 justify-content: center;
-                margin-bottom: 10px;
+                margin-bottom: 20px;
+                opacity: 0;
+                animation: fadeIn 0.5s ease forwards;
             }
             
             .tabs {
@@ -189,41 +265,50 @@
                 flex-wrap: wrap;
                 justify-content: center;
                 width: 100%;
-                max-width: 600px;
+                max-width: 700px;
+                background: white;
+                border-radius: 50px;
+                padding: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             }
             
             .tab {
                 display: inline-block;
-                padding: 10px 20px;
-                background-color: #f1f1f1;
+                padding: 12px 20px;
+                background-color: transparent;
                 cursor: pointer;
-                border-radius: 5px 5px 0 0;
-                margin: 0 2px 5px 2px;
-                border: 1px solid #ddd;
-                border-bottom: none;
-                box-shadow: 0 -2px 3px rgba(0,0,0,0.05);
+                border-radius: 25px;
+                margin: 0 5px;
+                border: none;
+                transition: all 0.3s ease;
                 text-align: center;
                 flex-grow: 1;
+                font-weight: 600;
+                color: #555;
             }
             
             .tab.active {
-                background-color: #3498db;
+                background: linear-gradient(to right, #3498db, #2980b9);
                 color: white;
-                box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+                box-shadow: 0 5px 10px rgba(52, 152, 219, 0.3);
             }
             
             .tab-content {
                 display: none;
-                padding: 15px;
-                border: 1px solid #ddd;
-                border-radius: 0 5px 5px 5px;
-                margin-top: -1px;
+                padding: 25px;
+                border-radius: 12px;
+                margin-top: 20px;
                 background-color: white;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                opacity: 0;
+                transform: translateY(10px);
+                transition: opacity 0.4s ease, transform 0.4s ease;
             }
             
             .tab-content.active {
                 display: block;
+                opacity: 1;
+                transform: translateY(0);
             }
             
             .squad-table td:nth-child(n+5):not(:last-child) {
@@ -231,12 +316,14 @@
             }
             
             .squad-info {
-                margin-bottom: 15px;
-                padding: 10px;
+                margin-bottom: 25px;
+                padding: 15px 20px;
                 background-color: white;
-                border-left: 4px solid #2196f3;
-                border-radius: 4px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                border-left: 5px solid #2196f3;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                opacity: 0;
+                animation: fadeIn 0.5s ease 0.2s forwards;
             }
             
             .highlight {
@@ -245,12 +332,12 @@
             
             .manager-squad {
                 display: none;
-                margin-bottom: 20px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
+                margin-bottom: 25px;
+                border-radius: 10px;
                 overflow: hidden;
                 background-color: white;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                animation: fadeIn 0.5s ease;
             }
             
             .manager-squad.active {
@@ -259,27 +346,32 @@
             
             .manager-squad h2 {
                 margin: 0;
-                padding: 10px 15px;
-                background-color: #f5f5f5;
-                border-bottom: 1px solid #ddd;
+                padding: 15px 20px;
+                background: linear-gradient(to right, #3498db, #2980b9);
+                color: white;
+                border-radius: 10px 10px 0 0;
             }
             
             .highest-gameweek {
                 background-color: white;
-                padding: 10px;
-                margin-bottom: 15px;
-                border-left: 4px solid #4CAF50;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                border-radius: 4px;
+                padding: 15px 20px;
+                margin-bottom: 25px;
+                border-left: 5px solid #4CAF50;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                border-radius: 8px;
+                opacity: 0;
+                animation: fadeIn 0.5s ease 0.1s forwards;
             }
             
             .warning {
                 background-color: #fff3cd;
-                padding: 10px;
-                margin-bottom: 15px;
-                border-left: 4px solid #ffc107;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                border-radius: 4px;
+                padding: 15px 20px;
+                margin-bottom: 25px;
+                border-left: 5px solid #ffc107;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                border-radius: 8px;
+                opacity: 0;
+                animation: fadeIn 0.5s ease forwards;
             }
             
             /* Styling for the total points column */
@@ -317,22 +409,31 @@
             
             /* Manager dropdown styling */
             .manager-selector {
-                margin-bottom: 15px;
+                margin-bottom: 25px;
                 width: 100%;
                 background-color: white;
-                padding: 12px;
-                border-radius: 5px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                opacity: 0;
+                animation: fadeIn 0.5s ease 0.3s forwards;
             }
             
             .manager-dropdown {
-                padding: 10px;
+                padding: 12px 15px;
                 font-size: 16px;
                 border: 1px solid #ddd;
-                border-radius: 4px;
+                border-radius: 8px;
                 width: 100%;
                 margin-top: 10px;
                 background-color: white;
+                transition: all 0.3s ease;
+            }
+            
+            .manager-dropdown:focus {
+                border-color: #3498db;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
             }
             
             /* Hover effects for rows to improve readability */
@@ -351,15 +452,23 @@
                 justify-content: space-between;
                 text-align: center;
                 font-size: 0.9em;
+                background: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                margin-bottom: 25px;
+                opacity: 0;
+                animation: fadeIn 0.5s ease forwards;
             }
             
             .status-info p {
                 margin: 5px;
                 flex: 1;
                 min-width: 200px;
+                font-weight: 500;
             }
             
-            /* Loading indicator for mobile */
+            /* Loading indicator */
             #loading {
                 display: none;
                 position: fixed;
@@ -367,17 +476,17 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-color: rgba(255, 255, 255, 0.8);
+                background-color: rgba(255, 255, 255, 0.9);
                 z-index: 999;
                 justify-content: center;
                 align-items: center;
             }
             
             .loading-spinner {
-                width: 50px;
-                height: 50px;
-                border: 5px solid #f3f3f3;
-                border-top: 5px solid #3498db;
+                width: 60px;
+                height: 60px;
+                border: 6px solid #f3f3f3;
+                border-top: 6px solid #3498db;
                 border-radius: 50%;
                 animation: spin 1s linear infinite;
             }
@@ -391,12 +500,14 @@
             .filters {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 15px;
-                margin-bottom: 20px;
-                background-color: #f8f9fa;
-                padding: 15px;
-                border-radius: 5px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                gap: 20px;
+                margin-bottom: 25px;
+                background-color: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                opacity: 0;
+                animation: fadeIn 0.5s ease 0.3s forwards;
             }
             
             .filter-group {
@@ -406,22 +517,34 @@
             
             .filter-dropdown, .search-input {
                 width: 100%;
-                padding: 8px;
-                margin-top: 5px;
+                padding: 12px 15px;
+                margin-top: 8px;
                 border: 1px solid #ddd;
-                border-radius: 4px;
+                border-radius: 8px;
                 font-size: 14px;
+                transition: all 0.3s ease;
+            }
+            
+            .filter-dropdown:focus, .search-input:focus {
+                border-color: #3498db;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
             }
             
             .results-info {
-                margin-bottom: 10px;
+                margin-bottom: 15px;
                 font-size: 14px;
                 color: #666;
+                padding: 10px;
+                background-color: #f8f9fa;
+                border-radius: 5px;
+                opacity: 0;
+                animation: fadeIn 0.5s ease 0.4s forwards;
             }
             
             /* Make the All Players table more compact */
             .all-players-table th, .all-players-table td {
-                padding: 6px 8px;
+                padding: 10px 12px;
             }
             
             /* Preserve alternating row colors even when filtering */
@@ -433,7 +556,7 @@
     <body>
         <h1>Fantasy Football Tracker</h1>
         <div class="status-info">
-            <p>Last updated: 2025-03-28 16:32:15</p>
+            <p>Last updated: 2025-03-28 16:59:14</p>
             <p>Last Gameweek: 29</p>
         </div>
         
@@ -13045,11 +13168,18 @@
         </div>
         
         <script>
+            // Apply animations to the league table rows
+            function animateLeagueTable() {
+                const rows = document.querySelectorAll('.league-table tbody tr');
+                rows.forEach((row, index) => {
+                    // Set animation delay for each row to create the sequential effect
+                    row.style.animationDelay = (0.05 * index) + 's';
+                });
+            }
+            
             function showTab(tabId) {
-                // Show loading spinner on mobile
-                if (window.innerWidth <= 768) {
-                    document.getElementById('loading').style.display = 'flex';
-                }
+                // Show loading spinner
+                document.getElementById('loading').style.display = 'flex';
                 
                 // Hide all tabs
                 const tabContents = document.getElementsByClassName('tab-content');
@@ -13075,6 +13205,11 @@
                     hideAllManagers();
                 }
                 
+                // Re-apply animations if showing league table
+                if (tabId === 'league-tab') {
+                    animateLeagueTable();
+                }
+                
                 // Hide loading spinner after a short delay
                 setTimeout(function() {
                     document.getElementById('loading').style.display = 'none';
@@ -13082,10 +13217,8 @@
             }
             
             function showManager(managerName) {
-                // Show loading spinner on mobile
-                if (window.innerWidth <= 768) {
-                    document.getElementById('loading').style.display = 'flex';
-                }
+                // Show loading spinner
+                document.getElementById('loading').style.display = 'flex';
                 
                 // Hide all manager squads
                 hideAllManagers();
@@ -13120,6 +13253,9 @@
             document.addEventListener('DOMContentLoaded', function() {
                 hideAllManagers();
                 document.getElementById('loading').style.display = 'none';
+                
+                // Apply animations to the league table rows on load
+                animateLeagueTable();
                 
                 // Add touchstart event listener for faster mobile response
                 const tabs = document.getElementsByClassName('tab');
