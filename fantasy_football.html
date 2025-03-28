@@ -551,12 +551,27 @@
             .all-players-table tr:nth-child(even) {
                 background-color: rgba(0, 0, 0, 0.02);
             }
+            
+            /* Highest scoring manager highlight */
+            .highest-points {
+                background-color: rgba(46, 204, 113, 0.15);
+                font-weight: bold;
+            }
+            
+            .highest-points td {
+                animation: highlightPulse 2.5s infinite alternate;
+            }
+            
+            @keyframes highlightPulse {
+                from { background-color: rgba(46, 204, 113, 0.1); }
+                to { background-color: rgba(46, 204, 113, 0.25); }
+            }
         </style>
     </head>
     <body>
         <h1>Fantasy Football Tracker</h1>
         <div class="status-info">
-            <p>Last updated: 2025-03-28 16:59:14</p>
+            <p>Last updated: 2025-03-28 17:14:59</p>
             <p>Last Gameweek: 29</p>
         </div>
         
@@ -564,11 +579,6 @@
             <div class="loading-spinner"></div>
         </div>
         
-        
-        <div class="highest-gameweek">
-            <h3>Highest Scoring Manager in Gameweek 29</h3>
-            <p>Michelle: 38 points</p>
-        </div>
         
         <div class="tabs-container">
             <div class="tabs">
@@ -596,7 +606,7 @@
         </thead>
         <tbody>
     
-        <tr>
+        <tr class="">
             <td>1</td>
             <td><span class="position-same">–</span> AVO</td>
             <td>1131</td>
@@ -607,7 +617,7 @@
             <td class='position-up'>1</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>2</td>
             <td><span class="position-same">–</span> Dil</td>
             <td>1029</td>
@@ -618,7 +628,7 @@
             <td >5</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>3</td>
             <td><span class="position-up">▲</span> Shotgun</td>
             <td>995</td>
@@ -629,7 +639,7 @@
             <td >12</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>4</td>
             <td><span class="position-down">▼</span> Fridge</td>
             <td>994</td>
@@ -640,7 +650,7 @@
             <td class='diff-top3'>3</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>5</td>
             <td><span class="position-same">–</span> Scum</td>
             <td>960</td>
@@ -651,7 +661,7 @@
             <td >15</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>6</td>
             <td><span class="position-same">–</span> Ed</td>
             <td>938</td>
@@ -662,7 +672,7 @@
             <td >6</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>7</td>
             <td><span class="position-same">–</span> Louise</td>
             <td>895</td>
@@ -673,7 +683,7 @@
             <td >14</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>8</td>
             <td><span class="position-same">–</span> Rich</td>
             <td>875</td>
@@ -684,7 +694,7 @@
             <td >9</td>
         </tr>
         
-        <tr>
+        <tr class="highest-points">
             <td>9</td>
             <td><span class="position-up">▲</span> Michelle</td>
             <td>862</td>
@@ -695,7 +705,7 @@
             <td >4</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>10</td>
             <td><span class="position-down">▼</span> Monkey</td>
             <td>858</td>
@@ -706,7 +716,7 @@
             <td class='diff-top3'>2</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>11</td>
             <td><span class="position-up">▲</span> Dave</td>
             <td>838</td>
@@ -717,7 +727,7 @@
             <td >16</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>12</td>
             <td><span class="position-down">▼</span> Shergs</td>
             <td>832</td>
@@ -728,7 +738,7 @@
             <td >8</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>13</td>
             <td><span class="position-same">–</span> Moses</td>
             <td>791</td>
@@ -739,7 +749,7 @@
             <td >10</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>14</td>
             <td><span class="position-same">–</span> John</td>
             <td>741</td>
@@ -750,7 +760,7 @@
             <td >11</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>15</td>
             <td><span class="position-same">–</span> Pony</td>
             <td>489</td>
@@ -761,7 +771,7 @@
             <td >13</td>
         </tr>
         
-        <tr>
+        <tr class="">
             <td>16</td>
             <td><span class="position-same">–</span> Young H</td>
             <td>485</td>
