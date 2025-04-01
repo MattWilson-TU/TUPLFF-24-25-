@@ -7,8 +7,8 @@
     <meta http-equiv="refresh" content="3;url=fantasy_football.html">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5d76e; /* Gold background color */
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: #f5f8fa;
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,6 +16,15 @@
             align-items: center;
             height: 100vh;
             flex-direction: column;
+            color: #333;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeInPage 0.8s ease-in forwards;
+        }
+        
+        @keyframes fadeInPage {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .container {
@@ -23,23 +32,45 @@
             max-width: 90%;
             width: 600px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for better readability */
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transform: translateY(20px);
+            animation: slideUp 0.6s ease-out forwards;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         
         h1 {
             color: #2c3e50;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
-            font-size: 1.8em;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 2em;
+            letter-spacing: -0.5px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            border-radius: 2px;
         }
         
         /* Responsive font size for mobile */
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.5em;
+                font-size: 1.6em;
             }
             
             p {
@@ -61,38 +92,37 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .spinner {
-            width: 100px; /* Increased width */
+            width: 100px;
             text-align: center;
             margin: 0 auto;
         }
         
         .spinner > div {
-            width: 20px; /* Slightly larger dots */
-            height: 20px;
+            width: 18px;
+            height: 18px;
             background-color: #4CAF50;
             border-radius: 100%;
             display: inline-block;
             animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-            margin: 0 5px; /* More spacing between dots */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Add shadow for depth */
+            margin: 0 5px;
         }
         
         .spinner .bounce1 {
-            background-color: #3498db; /* Different color for visual interest */
+            background-color: #3498db;
             animation-delay: -0.32s;
         }
         
         .spinner .bounce2 {
-            background-color: #f39c12; /* Different color for visual interest */
+            background-color: #2980b9;
             animation-delay: -0.16s;
         }
         
         .spinner .bounce3 {
-            background-color: #4CAF50; /* Keep the original color */
+            background-color: #2c3e50;
         }
         
         @keyframes sk-bouncedelay {
@@ -111,13 +141,25 @@
         }
         
         .manual-link {
-            color: #2196f3;
+            color: #3498db;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
         
         .manual-link:hover {
+            color: #2980b9;
             text-decoration: underline;
+        }
+        
+        .logo {
+            margin-bottom: 10px;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
         }
     </style>
 </head>
