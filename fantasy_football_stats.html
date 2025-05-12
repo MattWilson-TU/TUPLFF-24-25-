@@ -245,6 +245,13 @@
                 border-radius: 2px;
             }
             
+            /* Chart containers with fixed height */
+            #points-chart-container, #position-chart-container {
+                height: 500px;
+                width: 100%;
+                position: relative;
+            }
+            
             .chart-controls {
                 display: flex;
                 justify-content: center;
@@ -294,7 +301,14 @@
                 background-color: #ccc;
                 cursor: not-allowed;
             }
-        </style>
+        
+            /* Critical tab functionality CSS */
+            .tab-content { display: none; }
+            .tab-content.active { display: block; }
+            .tabs-container { display: flex; }
+            .tabs { display: flex; }
+            .tab { display: inline-block; }
+            </style>
     </head>
     <body>
         <a href="fantasy_football.html" class="back-link">← Back to League Table</a>
@@ -1036,6 +1050,15 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 40,
+                            bottom: 40,
+                            left: 30,
+                            right: 30
+                        }
+                    },
                     plugins: {
                         legend: {
                             display: false
@@ -1051,7 +1074,11 @@
                                 display: true,
                                 text: 'Points'
                             },
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                padding: 15
+                            },
+                            grace: '10%'  // Add 10% padding to the top of the scale
                         },
                         x: {
                             title: {
@@ -1072,6 +1099,15 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 40,
+                            bottom: 40,
+                            left: 30,
+                            right: 30
+                        }
+                    },
                     plugins: {
                         legend: {
                             display: false
@@ -1098,11 +1134,22 @@
                                 text: 'League Position'
                             },
                             reverse: true,
-                            min: 1,
-                            max: managers.length,
+                            min: 1,  // Start at position 1
+                            max: managers.length,  // End at last position
                             ticks: {
                                 stepSize: 1,
-                                precision: 0
+                                padding: 15,
+                                precision: 0,
+                                callback: function(value) {
+                                    // Only show integer values
+                                    if (Number.isInteger(value) && value >= 1 && value <= managers.length) {
+                                        return value;
+                                    }
+                                    return '';
+                                }
+                            },
+                            grid: {
+                                offset: false
                             }
                         },
                         x: {

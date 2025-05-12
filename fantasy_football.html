@@ -252,16 +252,14 @@
             }
             
             /* Tab styling */
-            .tabs-container {
-                display: flex;
+            .tabs-container { display: flex;
                 justify-content: center;
                 margin-bottom: 20px;
                 opacity: 0;
                 animation: fadeIn 0.5s ease forwards;
             }
             
-            .tabs {
-                display: flex;
+            .tabs { display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
                 width: 100%;
@@ -272,8 +270,7 @@
                 box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             }
             
-            .tab {
-                display: inline-block;
+            .tab { display: inline-block;
                 padding: 12px 20px;
                 background-color: transparent;
                 cursor: pointer;
@@ -293,8 +290,7 @@
                 box-shadow: 0 5px 10px rgba(52, 152, 219, 0.3);
             }
             
-            .tab-content {
-                display: none;
+            .tab-content { display: none;
                 padding: 25px;
                 border-radius: 12px;
                 margin-top: 20px;
@@ -305,8 +301,7 @@
                 transition: opacity 0.4s ease, transform 0.4s ease;
             }
             
-            .tab-content.active {
-                display: block;
+            .tab-content.active { display: block;
                 opacity: 1;
                 transform: translateY(0);
             }
@@ -590,12 +585,41 @@
                 background-color: #28a745;
                 position: relative;
             }
+            
+            
+    /* Chart containers with fixed height */
+    #points-chart-container, #position-chart-container {
+        min-height: 500px;
+        width: 100%;
+        position: relative;
+    }
+    
+    .chart-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+    
+            
+            .section-title::after {
+                content: '';
+                position: absolute;
+                bottom: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 50px;
+                height: 3px;
+                background: linear-gradient(to right, #3498db, #2c3e50);
+                border-radius: 2px;
+            }
         </style>
     </head>
     <body>
         <h1>Fantasy Football Tracker</h1>
         <div class="status-info">
-            <p>Last updated: 2025-05-12 13:17:52</p>
+            <p>Last updated: 2025-05-12 16:01:06</p>
             <p>Last Gameweek: 36</p>
         </div>
         
@@ -655,7 +679,7 @@
         
         <tr class="">
             <td>3</td>
-            <td><span class="position-up">▲</span> Scum</td>
+            <td><span class="position-same">–</span> Scum</td>
             <td>1194</td>
             <td>32</td>
             <td>147</td>
@@ -666,7 +690,7 @@
         
         <tr class="">
             <td>4</td>
-            <td><span class="position-down">▼</span> Fridge</td>
+            <td><span class="position-same">–</span> Fridge</td>
             <td>1185</td>
             <td>22</td>
             <td>9</td>
@@ -699,7 +723,7 @@
         
         <tr class="">
             <td>7</td>
-            <td><span class="position-up">▲</span> Monkey</td>
+            <td><span class="position-same">–</span> Monkey</td>
             <td>1105</td>
             <td>47</td>
             <td>59</td>
@@ -710,7 +734,7 @@
         
         <tr class="">
             <td>8</td>
-            <td><span class="position-up">▲</span> Rich</td>
+            <td><span class="position-same">–</span> Rich</td>
             <td>1087</td>
             <td>45</td>
             <td>18</td>
@@ -721,7 +745,7 @@
         
         <tr class="">
             <td>9</td>
-            <td><span class="position-down">▼</span> Louise</td>
+            <td><span class="position-same">–</span> Louise</td>
             <td>1082</td>
             <td>11</td>
             <td>5</td>
@@ -732,7 +756,7 @@
         
         <tr class="">
             <td>10</td>
-            <td><span class="position-down">▼</span> Michelle</td>
+            <td><span class="position-same">–</span> Michelle</td>
             <td>1076</td>
             <td>23</td>
             <td>6</td>
@@ -754,7 +778,7 @@
         
         <tr class="">
             <td>12</td>
-            <td><span class="position-up">▲</span> Moses</td>
+            <td><span class="position-same">–</span> Moses</td>
             <td>981</td>
             <td>48</td>
             <td>56</td>
@@ -776,7 +800,7 @@
         
         <tr class="">
             <td>14</td>
-            <td><span class="position-down">▼</span> Shergs</td>
+            <td><span class="position-same">–</span> Shergs</td>
             <td>955</td>
             <td>12</td>
             <td>16</td>
